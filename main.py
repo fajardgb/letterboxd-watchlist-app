@@ -38,3 +38,9 @@ async def common_watchlist(request: UsernameRequest):
     df["slug"] = common_slugs
     df = df.dropna(how="all")
     return {"films": df.to_dict(orient="records")}
+
+@app.get("/")
+async def root():
+    return FileResponse("frontend/index.html")
+
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
