@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Letterboxd Common Watchlist</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 20px;
+      }
+      input {
+        margin: 5px;
+        padding: 8px;
+        width: 200px;
+      }
+      button {
+        padding: 8px 16px;
+        cursor: pointer;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background: #f4f4f4;
+      }
+      #status {
+        margin-top: 10px;
+        color: gray;
+      }
+      #error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🎬 Letterboxd Common Watchlist</h1>
+    <p>
+      Enter 2 or more Letterboxd usernames to find films on all their
+      watchlists.
+    </p>
+
+    <div id="inputs">
+      <input type="text" placeholder="Username 1" class="username-input" />
+      <input type="text" placeholder="Username 2" class="username-input" />
+      <input
+        type="text"
+        placeholder="Username 3 (optional)"
+        class="username-input"
+      />
+    </div>
+    <br />
+    <button onclick="fetchCommonWatchlist()">Find Common Films</button>
+
+    <p id="status"></p>
+    <p id="error"></p>
+    <table id="results" style="display: none">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Director</th>
+          <th>Rating</th>
+          <th>Genres</th>
+          <th>Year</th>
+          <th>Duration (min)</th>
+        </tr>
+      </thead>
+      <tbody id="results-body"></tbody>
+    </table>
+
+    <script>
+      async function fetchCommonWatchlist() {
+        const inputs = document.querySelectorAll(".username-input");
+        const usernames = [...inputs]
+          .map((i) => i.value.trim())
+          .filter((v) => v !== "");
+
+        if (usernames.length < 2) {
+          document.getElementById("error").textContent =
+            "Please enter at least 2 usernames.";
+          return;
+        }
+
+        document.getElementById("error").textContent = "";
+        document.getElementById("status").textContent =
+          "Fetching watchlists... this may take a minute.";
+        document.getElementById("results").style.display = "none";
+
+        const response = await fetch("/common-watchlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ usernames }),
+        });
+
+        const data = await response.json();
+        document.getElementById("status").textContent = "";
+
+        if (data.error) {
+          document.getElementById("error").textContent = data.error;
+          return;
+        }
+
+        const tbody = document.getElementById("results-body");
+        tbody.innerHTML = "";
+        data.films.forEach((film) => {
+          const row = `<tr>
+          <td>${film.Title ?? ""}</td>
+          <td>${film.Director ?? ""}</td>
+          <td>${film.Rating ?? ""}</td>
+          <td>${film.Genres ?? ""}</td>
+          <td>${film.Year ?? ""}</td>
+          <td>${film.Duration ?? ""}</td>
+        </tr>`;
+          tbody.innerHTML += row;
+        });
+
+        document.getElementById("results").style.display = "table";
+      }
+    </script>
+  </body>
+</html>
