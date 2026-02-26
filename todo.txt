@@ -1,0 +1,10 @@
+Front end:
+- drop down for user input
+- loading bar for fetching data
+- UX nicer
+- download as csv
+- make find common films button not accessible when its going
+- make sure its sorting df by rating
+
+Back end:
+- make more efficient

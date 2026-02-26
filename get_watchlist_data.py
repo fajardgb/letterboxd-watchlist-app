@@ -49,6 +49,7 @@ async def get_multiple_movie_stats(slugs: list[str]):
     
 def results_to_df(results: list[tuple]):
     df = pd.DataFrame(results, columns=['Title', 'Director', 'Rating','Genres', 'Year', 'Duration'])
+    df.sort_values(by='Rating', ascending=False, inplace=True)
     return df
 
 if __name__ == "__main__":
