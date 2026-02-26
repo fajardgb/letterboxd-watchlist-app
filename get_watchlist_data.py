@@ -71,6 +71,7 @@ if __name__ == "__main__":
 
     # save df
     df = results_to_df(results)
+    df.sort_values(by='Rating', ascending=False, inplace=True)
     df.to_csv(f"{username}_watchlist_film_stats.csv", index=False)
     print(f"\nSaved film stats to {username}_watchlist_film_stats.csv")
     
