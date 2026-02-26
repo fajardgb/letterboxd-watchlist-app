@@ -1,5 +1,0 @@
-fastapi
-uvicorn
-aiohttp
-beautifulsoup4
-pandas
